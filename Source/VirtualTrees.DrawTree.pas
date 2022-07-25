@@ -204,6 +204,9 @@ type
     property OnHeaderDragged;
     property OnHeaderDraggedOut;
     property OnHeaderDragging;
+  	// -- CUSTOM CODE
+    property OnHeaderCanDropTarget;
+    //
     property OnHeaderDraw;
     property OnHeaderDrawQueryElements;
     property OnHeaderHeightTracking;

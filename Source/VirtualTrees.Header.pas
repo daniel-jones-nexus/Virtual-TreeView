@@ -61,7 +61,7 @@ type
   private
     FText,
       FHint               : string;
-    FWidth                : TDimension;
+
     FPosition             : TColumnPosition;
     FMinWidth             : TDimension;
     FMaxWidth             : TDimension;
@@ -113,6 +113,7 @@ type
 
   protected
     FLeft : TDimension;
+    FWidth                : TDimension; // -- CUSTOM CODE
     procedure ChangeScale(M, D : TDimension; isDpiChange : Boolean); virtual;
     procedure ComputeHeaderLayout(var PaintInfo : THeaderPaintInfo; DrawFormat : Cardinal; CalculateTextRect : Boolean = False);
     procedure DefineProperties(Filer : TFiler); override;
@@ -230,7 +231,6 @@ type
     procedure ReorderColumns(RTL : Boolean);
     procedure SetHoverIndex(Index : TColumnIndex);
     procedure Update(Item : TCollectionItem); override;
-    procedure UpdatePositions(Force : Boolean = False);
 
     property HeaderBitmap : TBitmap read FHeaderBitmap;
     property PositionToIndex : TIndexArray read FPositionToIndex;
@@ -242,6 +242,10 @@ type
   public
     constructor Create(AOwner : TVTHeader); virtual;
     destructor Destroy; override;
+
+    // -- CUSTOM CODE
+    procedure UpdatePositions(Force: Boolean = False);
+    //
 
     function Add : TVirtualTreeColumn; virtual;
     procedure AnimatedResize(Column : TColumnIndex; NewWidth : TDimension);
@@ -1262,6 +1266,11 @@ begin
   //Make coordinates relative to (0, 0) of the non-client area.
   Inc(ClientP.Y, FHeight);
   NewTarget := FColumns.ColumnFromPosition(ClientP);
+
+  // -- CUSTOM CODE
+  Tree.DoHeaderCanDropTarget(FColumns.FDragIndex, NewTarget);
+  // -- CUSTOM CODE
+
   NeedRepaint := (NewTarget <> InvalidColumn) and (NewTarget <> FColumns.DropTarget);
   if NewTarget >= 0 then
   begin
@@ -1417,6 +1426,12 @@ begin
           FColumns[NextColumn].Width := FColumns[NextColumn].Width - NewWidth + FColumns[FColumns.TrackIndex].Width
         else
           FColumns[FColumns.TrackIndex].Width := NewWidth; //1 EListError seen here (List index out of bounds (-1)) since 10/2013
+
+        // -- CUSTOM CODE r24405
+        // When resizing right-most column, artifacts appear if we don't call invalidate.
+        if FColumns.FTrackIndex = FColumns.GetLastVisibleColumn then
+          Invalidate(nil);
+        //
       end;
       HandleHeaderMouseMove := True;
       Result := 0;
@@ -3421,7 +3436,7 @@ begin
     if not (hoAutoResize in Header.Options) or (Index <> Header.AutoSizeIndex) then
     begin
       FWidth := Value;
-      Owner.UpdatePositions;
+//      Owner.UpdatePositions; -- CUSTOM CODE r23029
     end;
     if not (csLoading in TreeViewControl.ComponentState) and (Owner.UpdateCount = 0) then
     begin
@@ -3429,6 +3444,14 @@ begin
         Owner.AdjustAutoSize(Index);
       TreeViewControl.DoColumnResize(Index);
     end;
+
+	  // -- CUSTOM CODE r23029
+    if not (hoAutoResize in Owner.Header.Options) or (Index <> Owner.Header.AutoSizeIndex) then
+    begin
+      Owner.UpdatePositions;
+      Owner.Header.FOwner.Invalidate;
+  end;
+	  //
   end;
 end;
 
@@ -4247,12 +4270,27 @@ var
     Index,
     RestWidth : Integer;
   WasUpdating : Boolean;
+  Done : Boolean; // -- CUSTOM CODE
 begin
   if Count > 0 then
   begin
     // Determine index to be used for auto resizing. This is usually given by the owner's AutoSizeIndex, but
     // could be different if the column whose resize caused the invokation here is either the auto column itself
     // or visually to the right of the auto size column.
+
+    // -- CUSTOM CODE
+    Done := False;
+
+    if Assigned(FHeader.Tree.OnAdjustAutoSize) then
+      FHeader.Tree.OnAdjustAutoSize(FHeader.Tree, CurrentIndex, Done);
+
+    WasUpdating := csUpdating in FHeader.TreeView.ComponentState;
+    try
+      if Done then
+        UpdatePositions
+      else
+      begin
+        // --
     AutoIndex := Header.AutoSizeIndex;
     if (AutoIndex < 0) or (AutoIndex >= Count) then
       AutoIndex := Count - 1;
@@ -4282,15 +4320,21 @@ begin
           WasUpdating := csUpdating in TreeViewControl.ComponentState;
           if not WasUpdating then
             TreeViewControl.Updating(); // Fixes #398
-          try
-            TreeViewControl.DoColumnResize(AutoIndex);
-          finally
-            if not WasUpdating then
-              TreeViewControl.Updated();
+              // try -- CUSTOM CODE
+              FHeader.Tree.DoColumnResize(AutoIndex);
+              // finally
+              // if not WasUpdating then -- CUSTOM CODE
+              // FHeader.Treeview.Updated(); -- CUSTOM CODE
           end;
         end;
       end;
+        // -- CUSTOM CODE
     end;
+    finally
+      if not WasUpdating then
+        FHeader.Tree.Updated();
+  end;
+    // --
   end;
 end;
 
@@ -5535,6 +5579,10 @@ var
     ImageWidth     : Integer;
     Theme          : HTHEME;
     IdState        : Integer;
+// -- CUSTOM CODE
+    bIsSorted : Boolean;
+    oSortDirection : TSortDirection;
+// --
   begin
     ColImageInfo.Ghosted := False;
     PaintInfo.Column := Items[AColumn];
@@ -5568,7 +5616,10 @@ var
 
       IsEnabled := (coEnabled in FOptions) and (TreeViewControl.Enabled);
       ShowHeaderGlyph := (hoShowImages in Header.Options) and ((Assigned(Images) and (FImageIndex > - 1)) or FCheckBox);
-      ShowSortGlyph := (AColumn = Header.SortColumn) and (hoShowSortGlyphs in Header.Options);
+//-- CUSTOM CODE
+      FHeader.Tree.DoGetColumnSorting(AColumn, bIsSorted, oSortDirection);
+      ShowSortGlyph := (bIsSorted) and (hoShowSortGlyphs in FHeader.FOptions);
+// --
       WrapCaption := coWrapCaption in FOptions;
 
       PaintRectangle := ATargetRect;
@@ -5719,17 +5770,17 @@ var
             Pos.TopLeft := SortGlyphPos;
             Pos.Right := Pos.Left + SortGlyphSize.cx;
             Pos.Bottom := Pos.Top + SortGlyphSize.cy;
-            if Header.SortDirection = sdAscending then
+            if oSortDirection = sdAscending then // -- CUSTOM CODE
               Glyph := thHeaderSortArrowSortedUp
             else
               Glyph := thHeaderSortArrowSortedDown;
             Details := StyleServices.GetElementDetails(Glyph);
             if not StyleServices.DrawElement(TargetCanvas.Handle, Details, Pos, @Pos {$IF CompilerVersion  >= 34}, TreeViewControl.CurrentPPI {$IFEND}) then
-              PaintInfo.DrawSortArrow(Header.SortDirection);
+              PaintInfo.DrawSortArrow(oSortDirection); // -- CUSTOM CODE
           end
           else
           begin
-            PaintInfo.DrawSortArrow(Header.SortDirection);
+            PaintInfo.DrawSortArrow(oSortDirection); // -- CUSTOM CODE
           end;
         end;
 

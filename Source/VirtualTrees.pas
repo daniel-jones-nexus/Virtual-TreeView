@@ -662,6 +662,9 @@ type
   TVTColumnExportEvent = procedure (Sender: TBaseVirtualTree; aExportType: TVTExportType; Column: TVirtualTreeColumn) of object;
   TVTTreeExportEvent   = procedure(Sender: TBaseVirtualTree; aExportType: TVTExportType) of object;
 
+  // -- CUSTOM CODE
+  TVTAdjustAutoSize = procedure(Sender : TBaseVirtualTree; ColumndIndex : TColumnIndex; var ADone : Boolean) of Object;
+  // --
   // For painting a node and its columns/cells a lot of information must be passed frequently around.
   TVTImageInfo = record
     Index: TImageIndex;       // Index in the associated image list.
@@ -832,6 +835,9 @@ type
   TVTHeaderNotifyEvent = procedure(Sender: TVTHeader; Column: TColumnIndex) of object;
   TVTHeaderDraggingEvent = procedure(Sender: TVTHeader; Column: TColumnIndex; var Allowed: Boolean) of object;
   TVTHeaderDraggedEvent = procedure(Sender: TVTHeader; Column: TColumnIndex; OldPosition: Integer) of object;
+  // -- CUSTOM CODE 
+  TVTHeaderCanDropTargetEvent = procedure(Sender: TVTHeader; Column: TColumnIndex; var NewPosition: Integer) of object;
+  // --
   TVTHeaderDraggedOutEvent = procedure(Sender: TVTHeader; Column: TColumnIndex; DropPosition: TPoint) of object;
   TVTHeaderPaintEvent = procedure(Sender: TVTHeader; HeaderCanvas: TCanvas; Column: TVirtualTreeColumn; R: TRect; Hover,
     Pressed: Boolean; DropMark: TVTDropMarkMode) of object;
@@ -858,6 +864,9 @@ type
   TVTAfterGetMaxColumnWidthEvent = procedure(Sender: TVTHeader; Column: TColumnIndex; var MaxWidth: Integer) of object;
   TVTCanSplitterResizeColumnEvent = procedure(Sender: TVTHeader; P: TPoint; Column: TColumnIndex; var Allowed: Boolean) of object;
   TVTCanSplitterResizeHeaderEvent = procedure(Sender: TVTHeader; P: TPoint; var Allowed: Boolean) of object;
+  // -- CUSTOM CODE
+  TVTColumnSortingevent = procedure(Sender : TBaseVirtualTree; Column : tColumnIndex; var AIsSorted : Boolean; var ASortDirection : TSortDirection) of object;
+  //
 
   // move, copy and node tracking events
   TVTNodeMovedEvent = procedure(Sender: TBaseVirtualTree; Node: PVirtualNode) of object;
@@ -1216,6 +1225,9 @@ type
                                                  // application to load their own data saved in OnSaveTree
     FOnSaveTree: TVTSaveTreeEvent;               // called after the tree has been saved to a stream to allow an
                                                  // application to save its own data
+    // -- CUSTOM CODE
+	FOnGetColumnSorting : TVTColumnSortingEvent; // called to determine column sorting details for a column.
+    // --
 
     // header/column mouse events
     FOnAfterAutoFitColumn: TVTAfterAutoFitColumnEvent;
@@ -1282,6 +1294,9 @@ type
     FOnHeaderDraggedOut: TVTHeaderDraggedOutEvent; // header (column) drag'n drop, which did not result in a valid drop.
     FOnHeaderDragging: TVTHeaderDraggingEvent;   // header (column) drag'n drop
     FOnRenderOLEData: TVTRenderOLEDataEvent;     // application/descendant defined clipboard formats
+    // -- CUSTOM CODE
+    FOnHeaderCanDropTarget : TVTHeaderCanDropTargetEvent; // called to allow customising the drop target for columns.
+    // --
     FOnGetUserClipboardFormats: TVTGetUserClipboardFormatsEvent; // gives application/descendants the opportunity to
                                                  // add own clipboard formats on the fly
 
@@ -1313,6 +1328,7 @@ type
     FOnEndOperation: TVTOperationEvent;          // Called when an operation ends
 
     FVclStyleEnabled: Boolean;
+    FOnAdjustAutoSize: TVTAdjustAutoSize; // -- CUSTOM CODE
 
     procedure CMStyleChanged(var Message: TMessage); message CM_STYLECHANGED;
     procedure CMParentDoubleBufferedChange(var Message: TMessage); message CM_PARENTDOUBLEBUFFEREDCHANGED;
@@ -1551,6 +1567,9 @@ type
     procedure DoColumnDblClick(Column: TColumnIndex; Shift: TShiftState); virtual;
     procedure DoColumnResize(Column: TColumnIndex); virtual;
     procedure DoColumnVisibilityChanged(const Column: TColumnIndex; Visible: Boolean); virtual;
+    // -- CUSTOM CODE
+    procedure DoGetColumnSorting(const Column : TColumnIndex; var AIsSorted : Boolean; var ASortDirection : TSortDirection); virtual;
+    // --
     function DoCompare(Node1, Node2: PVirtualNode; Column: TColumnIndex): Integer; virtual;
     function DoCreateDataObject: IDataObject; virtual;
     function DoCreateDragManager: IVTDragManager; virtual;
@@ -1598,6 +1617,9 @@ type
     procedure DoHeaderDblClick(const HitInfo: TVTHeaderHitInfo); virtual;
     procedure DoHeaderDragged(Column: TColumnIndex; OldPosition: TColumnPosition); virtual;
     procedure DoHeaderDraggedOut(Column: TColumnIndex; DropPosition: TPoint); virtual;
+	// -- CUSTOM CODE
+    procedure DoHeaderCanDropTarget(Column : TColumnIndex; var NewPosition : Integer); virtual;
+	// --
     function DoHeaderDragging(Column: TColumnIndex): Boolean; virtual;
     procedure DoHeaderDraw(Canvas: TCanvas; Column: TVirtualTreeColumn; R: TRect; Hover, Pressed: Boolean;
       DropMark: TVTDropMarkMode); virtual;
@@ -1876,6 +1898,9 @@ type
     property OnColumnWidthDblClickResize: TVTColumnWidthDblClickResizeEvent read FOnColumnWidthDblClickResize
       write FOnColumnWidthDblClickResize;
     property OnColumnWidthTracking: TVTColumnWidthTrackingEvent read FOnColumnWidthTracking write FOnColumnWidthTracking;
+    // -- CUSTOM CODE
+    property OnGetColumnSorting : TVTColumnSortingEvent read FOnGetColumnSorting write FOnGetColumnSorting;
+    //
     property OnCompareNodes: TVTCompareEvent read FOnCompareNodes write FOnCompareNodes;
     property OnCreateDataObject: TVTCreateDataObjectEvent read FOnCreateDataObject write FOnCreateDataObject;
     property OnCreateDragManager: TVTCreateDragManagerEvent read FOnCreateDragManager write FOnCreateDragManager;
@@ -1915,6 +1940,9 @@ type
     property OnHeaderDragged: TVTHeaderDraggedEvent read FOnHeaderDragged write FOnHeaderDragged;
     property OnHeaderDraggedOut: TVTHeaderDraggedOutEvent read FOnHeaderDraggedOut write FOnHeaderDraggedOut;
     property OnHeaderDragging: TVTHeaderDraggingEvent read FOnHeaderDragging write FOnHeaderDragging;
+    // -- CUSTOM CODE
+    property OnHeaderCanDropTarget : TVTHeaderCanDropTargetEvent read FOnHeaderCanDropTarget write FOnHeaderCanDropTarget;
+    //
     property OnHeaderDraw: TVTHeaderPaintEvent read FOnHeaderDraw write FOnHeaderDraw;
     property OnHeaderDrawQueryElements: TVTHeaderPaintQueryElementsEvent read FOnHeaderDrawQueryElements
       write FOnHeaderDrawQueryElements;
@@ -2143,6 +2171,10 @@ type
     procedure ValidateChildren(Node: PVirtualNode; Recursive: Boolean);
     procedure ValidateNode(Node: PVirtualNode; Recursive: Boolean);
 
+    // -- CUSTOM CODE
+    property OnAdjustAutoSize : TVTAdjustAutoSize read FOnAdjustAutoSize write FOnAdjustAutoSize;
+    // --
+
     { Enumerations }
     function Nodes(ConsiderChildrenAbove: Boolean = False): TVTVirtualNodeEnumeration;
     function CheckedNodes(State: TCheckState = csCheckedNormal; ConsiderChildrenAbove: Boolean = False): TVTVirtualNodeEnumeration;
@@ -2244,8 +2276,10 @@ type
     var Done: Boolean) of object;
   TVTMeasureTextEvent = procedure(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode;
     Column: TColumnIndex; const Text: string; var Extent: Integer) of object;
+  // -- CUSTOM CODE
   TVTDrawTextEvent = procedure(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node: PVirtualNode;
-    Column: TColumnIndex; const Text: string; const CellRect: TRect; var DefaultDraw: Boolean) of object;
+    Column: TColumnIndex; const Text: string; const BoundsRect : TRect; const CellRect: TRect; var DefaultDraw: Boolean) of object;
+  // --
 
   /// Event arguments of the OnGetCellText event
   TVSTGetCellTextEventArgs = record
@@ -2513,6 +2547,9 @@ type
     property OnColumnVisibilityChanged;
     property OnColumnWidthDblClickResize;
     property OnColumnWidthTracking;
+    // -- CUSTOM CODE
+    property OnGetColumnSorting;
+    //
     property OnCompareNodes;
     property OnContextPopup;
     property OnCreateDataObject;
@@ -2560,6 +2597,9 @@ type
     property OnHeaderDragged;
     property OnHeaderDraggedOut;
     property OnHeaderDragging;
+    // -- CUSTOM CODE
+    property OnHeaderCanDropTarget;
+    //
     property OnHeaderDraw;
     property OnHeaderDrawQueryElements;
     property OnHeaderHeightDblClickResize;
@@ -2617,6 +2657,10 @@ type
     property OnCanResize;
     property OnGesture;
     property Touch;
+
+    // -- CUSTOM CODE
+    property OnAdjustAutoSize;
+    // --
   end;
 
   TVTDrawNodeEvent = procedure(Sender: TBaseVirtualTree; const PaintInfo: TVTPaintInfo) of object;
@@ -9471,6 +9515,10 @@ begin
 
     if (tsEditing in FStates) and not FHeader.UseColumns then
       UpdateEditBounds;
+
+    // -- CUSTOM CODE
+    Invalidate;
+    // --
   finally
     DoStateChange([], [tsSizing]);
   end;
@@ -11297,6 +11345,16 @@ begin
     OnColumnVisibilityChanged(Self, Column, Visible);
 end;
 
+// -- CUSTOM CODE
+procedure TBaseVirtualTree.DoGetColumnSorting(const Column : TColumnIndex; var AIsSorted : Boolean; var ASortDirection : TSortDirection);
+begin
+  AIsSorted := FHeader.Sortcolumn = Column;
+  ASortDirection := FHeader.SortDirection;
+
+  if Assigned(OnGetColumnSorting) then
+    FOnGetColumnSorting(Self, Column, AIsSorted, ASortDirection);
+end;
+// -- CUSTOM CODE
 //----------------------------------------------------------------------------------------------------------------------
 
 function TBaseVirtualTree.DoCompare(Node1, Node2: PVirtualNode; Column: TColumnIndex): Integer;
@@ -11903,6 +11961,14 @@ begin
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
+
+// -- CUSTOM CODE
+procedure TBaseVirtualTree.DoHeaderCanDropTarget(Column: TColumnIndex; var NewPosition: Integer);
+begin
+   if Assigned(FOnHeaderCanDropTarget) then
+    FOnHeaderCanDropTarget(FHeader, Column, NewPosition);
+end;
+// --
 
 procedure TBaseVirtualTree.DoHeaderClick(const HitInfo: TVTHeaderHitInfo);
 
@@ -25227,7 +25293,9 @@ var
 begin
   DefaultDraw := True;
   if Assigned(FOnDrawText) then
-    FOnDrawText(Self, PaintInfo.Canvas, PaintInfo.Node, PaintInfo.Column, Text, CellRect, DefaultDraw);
+    // -- CUSTOM CODE
+    FOnDrawText(Self, PaintInfo.Canvas, PaintInfo.Node, PaintInfo.Column, Text, PaintInfo.ContentRect,  CellRect, DefaultDraw);
+    // --
   if ((DrawFormat and DT_RIGHT) > 0) and (TFontStyle.fsItalic in PaintInfo.Canvas.Font.Style) then
     lText := Text + ' '
   else
