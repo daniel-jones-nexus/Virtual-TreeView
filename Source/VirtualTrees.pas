@@ -19697,7 +19697,10 @@ begin
       // Fix: If the node is multiline, leave the current width as
       // it is as returned by DoGetNodeWidth logic above.
       if (Column > NoColumn) and (vsMultiline in Run.States) then
-        Result := CurrentWidth
+      begin
+        if Result < CurrentWidth then
+          Result := CurrentWidth
+      end
       else
       if Result < (TextLeft + CurrentWidth) then
         Result := TextLeft + CurrentWidth;
