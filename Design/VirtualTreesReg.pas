@@ -11,7 +11,7 @@ interface
 {$warn UNSAFE_CODE off}
 
 uses
-  Windows, Classes, DesignIntf, DesignEditors, VCLEditors, PropertyCategories,
+  WinApi.Windows, System.Classes, DesignIntf, DesignEditors, VCLEditors, PropertyCategories,
   ColnEdit, VirtualTrees, VirtualTrees.DrawTree, VirtualTrees.HeaderPopup;
 
 type
@@ -27,7 +27,7 @@ procedure Register;
 implementation
 
 uses
-  StrEdit, Dialogs, TypInfo, SysUtils, Graphics, CommCtrl, ImgList, Controls,
+  StrEdit, VCL.Dialogs, System.TypInfo, System.SysUtils, VCL.Graphics, WinApi.CommCtrl, VCL.ImgList, VCL.Controls,
   VirtualTrees.ClipBoard, VirtualTrees.Actions;
 
 type

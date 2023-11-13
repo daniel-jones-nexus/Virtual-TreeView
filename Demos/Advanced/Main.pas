@@ -12,8 +12,8 @@ interface
 {$warn UNSAFE_CODE off}
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ComCtrls, ToolWin, Buttons, ExtCtrls, StdCtrls, ImgList, ActnList,
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.ComCtrls, Vcl.ToolWin, Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ImgList, Vcl.ActnList,
   StdActns, VirtualTrees;
 
 type
@@ -56,7 +56,7 @@ procedure SetStatusbarText(const S: string);
 implementation
 
 uses
-  CommCtrl, VirtualTrees.Accessibility,
+  WinApi.CommCtrl, VirtualTrees.Accessibility,
   SpeedDemo, GeneralAbilitiesDemo, DrawTreeDemo, PropertiesDemo,
   GridDemo, VisibilityDemo, AlignDemo, WindowsXPStyleDemo, MultilineDemo, HeaderCustomDrawDemo,
   States;

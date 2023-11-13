@@ -15,8 +15,8 @@ interface
 {$warn UNSAFE_CODE off}
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Buttons, VirtualTrees, ComCtrls, ExtCtrls, ImgList, Menus, UITypes;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, Vcl.Buttons, VirtualTrees, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.ImgList, Vcl.Menus, UITypes;
 
 type
   TAlignForm = class(TForm)

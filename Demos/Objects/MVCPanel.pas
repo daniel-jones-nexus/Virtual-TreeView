@@ -23,7 +23,7 @@ unit MVCPanel;
 
 interface
 
-uses Windows,Controls,Graphics,SysUtils,Classes,ExtCtrls,StdCtrls,
+uses WinApi.Windows,Controls,Graphics,SysUtils,Classes,ExtCtrls,StdCtrls,
      MVCTypes,VirtualTrees;
 
 type TMVCPanel=class(TCustomPanel)

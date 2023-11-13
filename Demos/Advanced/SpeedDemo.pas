@@ -8,8 +8,8 @@ unit SpeedDemo;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, VirtualTrees, ExtDlgs, ComCtrls, jpeg, Menus;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, VirtualTrees, Vcl.ExtDlgs, Vcl.ComCtrls, jpeg, Menus;
 
 type
   TSpeedForm = class(TForm)
@@ -51,7 +51,7 @@ var
 implementation
 
 uses
-  Math, States;
+  System.Math, States;
 
 {$R *.DFM}
 

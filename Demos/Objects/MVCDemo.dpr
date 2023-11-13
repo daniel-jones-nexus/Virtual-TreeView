@@ -10,7 +10,7 @@ program MVCDemo;
   Free: You may use this code in every way you find it useful or fun. }
 
 uses
-  Forms,
+  Vcl.Forms,
   MVCDemoMain in 'MVCDemoMain.pas' {fmMVCDemo},
   MVCPanel in 'MVCPanel.pas';
 

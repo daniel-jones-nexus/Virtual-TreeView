@@ -11,8 +11,8 @@ interface
 {$warn UNSAFE_CODE off}
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  Dialogs, VirtualTrees, ImgList, ComCtrls, ToolWin, Menus, StdCtrls, UITypes,
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
+  Vcl.Dialogs, VirtualTrees, Vcl.ImgList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus, Vcl.StdCtrls, UITypes,
   System.ImageList;
 
 type
@@ -59,7 +59,7 @@ var
 implementation
 
 uses
-  Main, ShellAPI, Printers, States, Vcl.GraphUtil;
+  Main, WinApi.ShellApi, Vcl.Printers, States, Vcl.GraphUtil;
 
 {$R *.dfm}
 

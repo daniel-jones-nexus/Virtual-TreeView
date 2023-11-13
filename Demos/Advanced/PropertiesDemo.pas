@@ -9,8 +9,8 @@ unit PropertiesDemo;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, VirtualTrees, ImgList, ExtCtrls, UITypes;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, VirtualTrees, Vcl.ImgList, Vcl.ExtCtrls, UITypes;
 
 const
   // Helper message to decouple node change handling from edit handling.
@@ -55,7 +55,7 @@ var
 implementation
 
 uses
-  Editors, Math, Main, States;
+  Editors, System.Math, Main, States;
 
 {$R *.DFM}
 

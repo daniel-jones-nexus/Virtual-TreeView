@@ -7,9 +7,9 @@ unit Main;
 interface
 
 uses 
-  Windows, Messages, ActiveX, SysUtils, Forms, Dialogs, Graphics, 
-  VirtualTrees, ActnList, ComCtrls, ExtCtrls, StdCtrls, Controls, Classes,
-  ImgList, System.Actions, System.ImageList;
+  WinApi.Windows, WinApi.Messages, WinApi.ActiveX, System.SysUtils, Vcl.Forms, Vcl.Dialogs, Vcl.Graphics, 
+  VirtualTrees, Vcl.ActnList, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Controls, System.Classes,
+  Vcl.ImgList, System.Actions, System.ImageList;
 
 type
   TMainForm = class(TForm)
@@ -77,7 +77,7 @@ var
 implementation                          
 
 uses
-  TypInfo, ShlObj, UrlMon, VirtualTrees.ClipBoard;
+  System.TypInfo, WinApi.ShlObj, UrlMon, VirtualTrees.ClipBoard;
   
 {$R *.DFM}
 {$R Res\Extra.res}  // Contains a little rich text for the rich edit control and a XP manifest.

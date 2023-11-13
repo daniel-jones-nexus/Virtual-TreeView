@@ -3,7 +3,7 @@ program Advanced;
 {$R 'ExtraRes.res' 'ExtraRes.rc'}
 
 uses
-  Forms,
+  Vcl.Forms,
   SpeedDemo in 'SpeedDemo.pas' {SpeedForm},
   DrawTreeDemo in 'DrawTreeDemo.pas' {DrawTreeForm},
   GeneralAbilitiesDemo in 'GeneralAbilitiesDemo.pas' {frmGeneralAbilities},

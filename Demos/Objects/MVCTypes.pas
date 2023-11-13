@@ -54,8 +54,8 @@ unit MVCTypes;
 
 interface
 
-uses Windows,Messages,SysUtils,Graphics,VirtualTrees,Classes,StdCtrls,
-     Controls,Forms,ImgList,
+uses WinApi.Windows,Messages,SysUtils,Graphics,VirtualTrees,Classes,StdCtrls,
+     Vcl.Controls,Forms,ImgList,
      System.Types, System.UITypes;
 
 type { TMVCNode is the encapsulation of a single Node in the structure.
@@ -677,7 +677,7 @@ begin
                 else Brush.Color:=clBlack;
               SaveFontColor:=Font.Color;
               Font.Color:=Self.Color;
-              Windows.DrawFocusRect(Handle,ContentRect);
+              WinApi.Windows.DrawFocusRect(Handle,ContentRect);
               Font.Color:=SaveFontColor;
             end;
 

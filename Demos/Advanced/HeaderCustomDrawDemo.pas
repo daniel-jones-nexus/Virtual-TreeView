@@ -7,8 +7,8 @@ unit HeaderCustomDrawDemo;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ImgList, VirtualTrees, StdCtrls, ExtCtrls;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
+  Vcl.Dialogs, Vcl.ImgList, VirtualTrees, Vcl.StdCtrls, ExtCtrls;
 
 type
   THeaderOwnerDrawForm = class(TForm)
@@ -50,7 +50,7 @@ var
 implementation
 
 uses
-  States, Types,VirtualTrees.Utils;
+  States, System.Types,VirtualTrees.Utils;
   
 {$R *.dfm}
 

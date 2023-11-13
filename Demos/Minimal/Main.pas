@@ -6,8 +6,8 @@ unit Main;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  VirtualTrees, StdCtrls, ExtCtrls;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  VirtualTrees, Vcl.StdCtrls, ExtCtrls;
 
 type
   TMainForm = class(TForm)

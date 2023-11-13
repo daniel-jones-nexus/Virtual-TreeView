@@ -4,7 +4,7 @@ interface
 
 uses
   DUnitX.TestFramework,
-  Classes,
+  System.Classes,
   Vcl.Forms,
   VirtualTrees;
 
@@ -37,7 +37,7 @@ implementation
 
 uses
   VirtualTrees.WorkerThread,
-  SysUtils;
+  System.SysUtils;
 
 procedure TVTWorkerThreadIssue1001Tests.Setup;
 begin

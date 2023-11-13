@@ -13,9 +13,9 @@ unit MVCDemoMain;
 
 interface
 
-uses Windows,Messages,SysUtils,Classes,Graphics,Controls,Forms,Dialogs,
+uses WinApi.Windows,Messages,SysUtils,Classes,Graphics,Controls,Forms,Dialogs,
      MVCTypes,MVCPanel,StdCtrls,ExtCtrls,ImgList,VirtualTrees,ComCtrls,
-  Buttons, System.ImageList;
+  Vcl.Buttons, System.ImageList;
 
 type TfmMVCDemo=class(TForm)
        pnlControls:TPanel;

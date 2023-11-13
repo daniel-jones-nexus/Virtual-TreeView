@@ -1496,7 +1496,7 @@ type
     procedure WMThemeChanged(var Message: TMessage); message WM_THEMECHANGED;
     procedure WMVScroll(var Message: TWMVScroll); message WM_VSCROLL;
     function GetRangeX: Cardinal;
-    function GetDoubleBuffered: Boolean;
+    function GetDoubleBuffered: Boolean; override;
     procedure SetDoubleBuffered(const Value: Boolean);
     function GetVclStyleEnabled: Boolean; inline;
     procedure SetOnPrepareButtonImages(const Value: TVTPrepareButtonImagesEvent);
@@ -19682,7 +19682,7 @@ begin
     while Assigned(Run) and not OperationCanceled do
     begin
       GetOffsets(Run, lOffsets, TVTElement.ofsLabel, Column);
-      TextLeft := lOffsets[TVTElement.ofsLabel];
+      TextLeft := lOffsets[TVTElement.ofsText];
       CurrentWidth := DoGetNodeWidth(Run, Column);
       Inc(CurrentWidth, DoGetNodeExtraWidth(Run, Column));
       Inc(CurrentWidth, DoGetCellContentMargin(Run, Column).X);
@@ -19696,14 +19696,16 @@ begin
       // really does not apply for vsMultiline case.
       // Fix: If the node is multiline, leave the current width as
       // it is as returned by DoGetNodeWidth logic above.
-      if (Column > NoColumn) and (vsMultiline in Run.States) then
+      // CUSTOM CODE
+      if (Column > NoColumn) and (vsMultiline in Run.States) and (Column <> Header.MainColumn) then
       begin
         if Result < CurrentWidth then
           Result := CurrentWidth
       end
       else
-      if Result < (TextLeft + CurrentWidth) then
-        Result := TextLeft + CurrentWidth;
+        if Result < (TextLeft + CurrentWidth) then
+          Result := TextLeft + CurrentWidth;
+      // CUSTOM CODE
 
       // Get next visible node and update left node position if needed.
       NextNode := GetNextVisible(Run, True);
@@ -23304,7 +23306,7 @@ begin
   begin
     DoReset(Node);
     DeleteChildren(Node);
-    // Remove initialized and other dynamic styles, keep persistent styles.
+    // Remove initialized and other dynamic Vcl.Styles, keep persistent styles.
     Node.States := Node.States - [vsInitialized, vsChecking, vsCutOrCopy, vsDeleting, vsHasChildren, vsExpanded,
       vsHeightMeasured];
     InvalidateNode(Node);
@@ -25143,10 +25145,10 @@ var
   Data: PInteger;
 
 begin
-  if (Column > NoColumn) and (vsMultiline in Node.States) then
-    Result := FHeader.Columns[Column].Width
-  else
-  begin
+//  if (Column > NoColumn) and (vsMultiline in Node.States) then
+//    Result := FHeader.Columns[Column].Width
+//  else
+//  begin
     if Canvas = nil then
       Canvas := Self.Canvas;
 
@@ -25170,7 +25172,7 @@ begin
     else
       // any other column
       Result := CalculateTextWidth(Canvas, Node, Column, Text[Node, Column]);
-  end;
+//  end;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -10,8 +10,8 @@ unit GridDemo;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, VirtualTrees, ImgList, Menus, System.ImageList;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, VirtualTrees, Vcl.ImgList, Vcl.Menus, System.ImageList;
 
 type
   TGridForm = class(TForm)

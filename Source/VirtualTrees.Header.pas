@@ -2958,7 +2958,14 @@ begin
   with PaintInfo, Column do
   begin
     ShowHeaderGlyph := (hoShowImages in Header.Options) and ((Assigned(Header.Images) and (FImageIndex > - 1)) or FCheckBox);
-    ShowSortGlyph := ((Header.SortColumn > - 1) and (Self = Owner.Items[Header.SortColumn])) and (hoShowSortGlyphs in Header.Options);
+
+
+    // CUSTOM CODE
+    var bIsSorted : Boolean;
+    var oSortDirection : TSortDirection;
+    TreeViewControl.DoGetColumnSorting(Self.Index, bIsSorted, oSortDirection);
+    ShowSortGlyph := bIsSorted and (hoShowSortGlyphs in Header.Options);
+    // CUSTOM CODE
 
       // This path for text columns or advanced owner draw.
       // See if the application wants to draw part of the header itself.
@@ -5617,8 +5624,8 @@ var
       IsEnabled := (coEnabled in FOptions) and (TreeViewControl.Enabled);
       ShowHeaderGlyph := (hoShowImages in Header.Options) and ((Assigned(Images) and (FImageIndex > - 1)) or FCheckBox);
 //-- CUSTOM CODE
-      FHeader.Tree.DoGetColumnSorting(AColumn, bIsSorted, oSortDirection);
-      ShowSortGlyph := (bIsSorted) and (hoShowSortGlyphs in FHeader.FOptions);
+    TreeViewControl.DoGetColumnSorting(AColumn, bIsSorted, oSortDirection);
+    ShowSortGlyph := bIsSorted and (hoShowSortGlyphs in Header.Options);
 // --
       WrapCaption := coWrapCaption in FOptions;
 

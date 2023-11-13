@@ -884,7 +884,7 @@ begin
       if tOffset > 0 then
         OffsetRect(R, 0, tOffset);
     end;
-    R.Top := Max( - 1, R.Top); //A value smaller than -1 will prevent the edit cursor from being shown by Windows, see issue #159
+    R.Top := Max( - 1, R.Top); //A value smaller than -1 will prevent the edit cursor from being shown by WinApi.Windows, see issue #159
     R.Left := Max( - 1, R.Left);
     SendMessage(Edit.Handle, EM_SETRECTNP, 0, LPARAM(@R));
   end;

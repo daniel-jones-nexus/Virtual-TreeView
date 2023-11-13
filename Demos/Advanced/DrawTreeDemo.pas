@@ -24,9 +24,9 @@ unit DrawTreeDemo;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  VirtualTrees, StdCtrls, {$ifdef GraphicEx} GraphicEx, {$else} JPEG, {$endif}
-  ImgList, ComCtrls, UITypes, VirtualTrees.DrawTree, System.ImageList;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  VirtualTrees, Vcl.StdCtrls, {$ifdef GraphicEx} GraphicEx, {$else} JPEG, {$endif}
+  Vcl.ImgList, Vcl.ComCtrls, UITypes, VirtualTrees.DrawTree, System.ImageList;
 
 type
   TDrawTreeForm = class(TForm)
@@ -72,7 +72,7 @@ var
 implementation
 
 uses
-  FileCtrl, ShellAPI, Mask, ShlObj, ActiveX, States,VirtualTrees.Utils;
+  FileCtrl, WinApi.ShellApi, Mask, WinApi.ShlObj, WinApi.ActiveX, States,VirtualTrees.Utils;
 
 {$R *.DFM}
 

@@ -15,8 +15,8 @@ unit VirtualTreeWrapper;
 
 interface
 
-uses SysUtils, Classes, Controls, VirtualTrees, Generics.Collections,
-     RTLConsts, UITypes;
+uses System.SysUtils, System.Classes, Vcl.Controls, VirtualTrees, Generics.Collections,
+     System.RTLConsts, UITypes;
 
 type
   ///<summary>

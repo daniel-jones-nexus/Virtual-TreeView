@@ -1,7 +1,7 @@
 program OLE;
 
 uses
-  Forms,
+  Vcl.Forms,
   Main in 'Main.pas' {MainForm};
 
 {$R *.RES}

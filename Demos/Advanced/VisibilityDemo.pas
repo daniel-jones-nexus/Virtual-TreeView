@@ -10,8 +10,8 @@ unit VisibilityDemo;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, VirtualTrees, ComCtrls, ExtCtrls, ImgList;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, VirtualTrees, Vcl.ComCtrls, Vcl.ExtCtrls, ImgList;
 
 type
   TVisibilityForm = class(TForm)

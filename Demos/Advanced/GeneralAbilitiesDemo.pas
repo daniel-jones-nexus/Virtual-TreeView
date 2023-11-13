@@ -25,9 +25,9 @@ interface
 {$ifend}
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Buttons, VirtualTrees, ComCtrls, ExtCtrls, ImgList, Menus,
-  StdActns, ActnList, VirtualTrees.HeaderPopup, UITypes, System.ImageList;
+  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, Vcl.Buttons, VirtualTrees, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.ImgList, Vcl.Menus,
+  StdActns, Vcl.ActnList, VirtualTrees.HeaderPopup, UITypes, System.ImageList;
 
 type
   TGeneralForm = class(TForm)
@@ -93,7 +93,7 @@ var
 implementation
 
 uses
-  ShellAPI, Main, States;
+  WinApi.ShellApi, Main, States;
 
 {$R *.DFM}
 
