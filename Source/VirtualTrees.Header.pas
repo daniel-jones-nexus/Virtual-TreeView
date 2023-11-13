@@ -113,8 +113,9 @@ type
 
   protected
     FLeft : TDimension;
-    procedure ChangeScale(M, D : TDimension); virtual;
     FWidth                : TDimension; // -- CUSTOM CODE
+
+    procedure ChangeScale(M, D : TDimension); virtual;
 
     procedure ComputeHeaderLayout(var PaintInfo : THeaderPaintInfo; DrawFormat : Cardinal; CalculateTextRect : Boolean = False);
     procedure DefineProperties(Filer : TFiler); override;
