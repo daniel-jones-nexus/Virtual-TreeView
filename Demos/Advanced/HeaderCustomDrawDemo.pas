@@ -7,8 +7,9 @@ unit HeaderCustomDrawDemo;
 interface
 
 uses
-  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, Vcl.ImgList, VirtualTrees, Vcl.StdCtrls, ExtCtrls;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ImgList, VirtualTrees, StdCtrls, ExtCtrls, VirtualTrees.BaseTree, System.ImageList,
+  VirtualTrees.Types;
 
 type
   THeaderOwnerDrawForm = class(TForm)

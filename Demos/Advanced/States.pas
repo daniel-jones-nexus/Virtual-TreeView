@@ -3,8 +3,8 @@ unit States;
 interface
 
 uses
-  WinApi.Windows, WinApi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, Vcl.StdCtrls, VirtualTrees;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, VirtualTrees, VirtualTrees.BaseTree;
 
 type
   TStateForm = class(TForm)
@@ -76,6 +76,9 @@ implementation
 
 {$R *.dfm}
 
+uses
+  VirtualTrees.Types;
+
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure UpdateStateDisplay(CurrentStates, Enter, Leave: TVirtualTreeStates);
@@ -120,7 +123,6 @@ begin
       SetActiveState(CheckBox32, tsStructureChangePending in NewStates);
       SetActiveState(CheckBox33, tsSynchMode in NewStates);
       SetActiveState(CheckBox34, tsThumbTracking in NewStates);
-      SetActiveState(CheckBox35, tsUpdating in NewStates);
       SetActiveState(CheckBox36, tsUseCache in NewStates);
       SetActiveState(CheckBox37, tsUserDragObject in NewStates);
       SetActiveState(CheckBox38, tsUseThemes in NewStates);

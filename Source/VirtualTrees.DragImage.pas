@@ -18,9 +18,14 @@ type
   TVTBias = - 128 .. 127;
 
   // Simple move limitation for the drag image.
-  TVTDragMoveRestriction = (dmrNone, dmrHorizontalOnly, dmrVerticalOnly);
+  TVTDragMoveRestriction = (
+    dmrNone,
+    dmrHorizontalOnly,
+    dmrVerticalOnly
+  );
 
-  TVTDragImageStates = set of (disHidden, // Internal drag image is currently hidden (always hidden if drag image helper interfaces are used).
+  TVTDragImageStates = set of (
+    disHidden,                            // Internal drag image is currently hidden (always hidden if drag image helper interfaces are used).																															
     disInDrag,                            // Drag image class is currently being used.
     disPrepared,                          // Drag image class is prepared.
     disSystemSupport                      // Running on Windows 2000 or higher. System supports drag images natively.
@@ -74,10 +79,10 @@ uses
   WinApi.Messages,
   System.SysUtils,
   System.Math,
-  VirtualTrees,
   VirtualTrees.DragnDrop,
   VirtualTrees.Types,
-  VirtualTrees.Utils;
+  VirtualTrees.Utils,
+  VirtualTrees.BaseTree;
 
 //----------------- TVTDragImage ---------------------------------------------------------------------------------------
 
@@ -242,6 +247,7 @@ begin
           // If moved more than image size then just restore old screen and blit image to new position.
           BitBlt(ScreenDC, FImagePosition.X, FImagePosition.Y, FBackImage.Width, FBackImage.Height, FBackImage.Canvas.Handle, 0, 0, SRCCOPY);
 
+          GetPixel(ScreenDC, FImagePosition.X, FImagePosition.Y);
           if ForceRepaint then
             UpdateWindow(FOwner.Handle);
 

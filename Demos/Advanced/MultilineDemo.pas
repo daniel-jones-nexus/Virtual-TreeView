@@ -7,8 +7,8 @@ unit MultilineDemo;
 interface
 
 uses
-  WinApi.Windows, System.SysUtils, System.Classes, Vcl.Forms, Vcl.Controls, Vcl.Graphics, VirtualTrees,
-  Vcl.ExtCtrls, Vcl.StdCtrls, ImgList;
+  Windows, SysUtils, Classes, Forms, Controls, Graphics, VirtualTrees,
+  ExtCtrls, StdCtrls, ImgList, VirtualTrees.Types;
   
 type
   TNodeForm = class(TForm)

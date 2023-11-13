@@ -13,7 +13,7 @@ interface
 uses
   WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
   Vcl.Dialogs, VirtualTrees, Vcl.ImgList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus, Vcl.StdCtrls, UITypes,
-  System.ImageList;
+  System.ImageList, VirtualTrees.Types;
 
 type
   TWindowsXPForm = class(TForm)

@@ -10,7 +10,7 @@ uses
   Vcl.Graphics,
   Vcl.Controls,
   VirtualTrees.Types,
-  VirtualTrees;
+  VirtualTrees.BaseTree;
 
 type
   TEnumFormatEtc = class(TInterfacedObject, IEnumFormatEtc)
@@ -26,22 +26,6 @@ type
     function Skip(celt : Integer) : HResult; stdcall;
   end;
 
-  // ----- OLE drag'n drop handling
-
-  IVTDragManager = interface(IUnknown)
-    ['{C4B25559-14DA-446B-8901-0C879000EB16}']
-    procedure ForceDragLeave; stdcall;
-    function GetDataObject : IDataObject; stdcall;
-    function GetDragSource : TBaseVirtualTree; stdcall;
-    function GetDropTargetHelperSupported : Boolean; stdcall;
-    function GetIsDropTarget : Boolean; stdcall;
-
-    property DataObject : IDataObject read GetDataObject;
-    property DragSource : TBaseVirtualTree read GetDragSource;
-    property DropTargetHelperSupported : Boolean read GetDropTargetHelperSupported;
-    property IsDropTarget : Boolean read GetIsDropTarget;
-  end;
-
   // TVTDragManager is a class to manage drag and drop in a Virtual Treeview.
   TVTDragManager = class(TInterfacedObject, IVTDragManager, IDropSource, IDropTarget)
   private
@@ -54,7 +38,6 @@ type
 
     function GetDataObject : IDataObject; stdcall;
     function GetDragSource : TBaseVirtualTree; stdcall;
-    function GetDropTargetHelperSupported : Boolean; stdcall;
     function GetIsDropTarget : Boolean; stdcall;
   public
     constructor Create(AOwner : TBaseVirtualTree); virtual;
@@ -80,7 +63,8 @@ var
     // No specific page of multipage data (we don't use multipage data by default).
     lindex : - 1;
     // Acceptable storage formats are IStream and global memory. The first is preferred.
-    tymed : TYMED_ISTREAM or TYMED_HGLOBAL;);
+    tymed : TYMED_ISTREAM or TYMED_HGLOBAL;
+  );
 
 implementation
 
@@ -219,13 +203,6 @@ end;
 function TVTDragManager.GetDragSource : TBaseVirtualTree;
 begin
   Result := FDragSource;
-end;
-
-//----------------------------------------------------------------------------------------------------------------------
-
-function TVTDragManager.GetDropTargetHelperSupported : Boolean;
-begin
-  Result := Assigned(FDropTargetHelper);
 end;
 
 //----------------------------------------------------------------------------------------------------------------------

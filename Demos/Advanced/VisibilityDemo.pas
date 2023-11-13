@@ -11,7 +11,7 @@ interface
 
 uses
   WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.StdCtrls, VirtualTrees, Vcl.ComCtrls, Vcl.ExtCtrls, ImgList;
+  Vcl.StdCtrls, VirtualTrees, Vcl.ComCtrls, Vcl.ExtCtrls, ImgList, VirtualTrees.Types;
 
 type
   TVisibilityForm = class(TForm)

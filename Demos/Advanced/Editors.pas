@@ -8,7 +8,7 @@ interface
 uses
   WinApi.Windows, WinApi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   Vcl.StdCtrls, Vcl.ExtDlgs, Vcl.ImgList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Mask,
-  VirtualTrees, VirtualTrees.EditLink;
+  VirtualTrees, VirtualTrees.EditLink, VirtualTrees.Types;
 
 type
   // Describes the type of value a property tree node stores in its data property.

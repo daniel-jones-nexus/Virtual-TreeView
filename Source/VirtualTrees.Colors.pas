@@ -12,14 +12,31 @@ type
   //class to collect all switchable colors into one place
   TVTColors = class(TPersistent)
   private type
-    TVTColorEnum = (cDisabledColor, cDropMarkColor, cDropTargetColor, cFocusedSelectionColor, cGridLineColor, cTreeLineColor, cUnfocusedSelectionColor, cBorderColor, cHotColor,
-      cFocusedSelectionBorderColor, cUnfocusedSelectionBorderColor, cDropTargetBorderColor, cSelectionRectangleBlendColor, cSelectionRectangleBorderColor, cHeaderHotColor,
-      cSelectionTextColor, cUnfocusedColor);
+    TVTColorEnum = (
+	    cDisabledColor
+	  , cDropMarkColor
+	  , cDropTargetColor
+	  , cFocusedSelectionColor
+	  , cGridLineColor
+	  , cTreeLineColor
+	  , cUnfocusedSelectionColor
+	  , cBorderColor
+	  , cHotColor
+	  , cFocusedSelectionBorderColor
+	  , cUnfocusedSelectionBorderColor
+	  , cDropTargetBorderColor
+	  , cSelectionRectangleBlendColor
+	  , cSelectionRectangleBorderColor
+	  , cHeaderHotColor
+	  , cSelectionTextColor
+	  , cUnfocusedColor
+	  );
 
     //Please make sure that the published Color properties at the corresponding index
     //have the same color if you change anything here!
   const
-    cDefaultColors : array [TVTColorEnum] of TColor = (clBtnShadow, //DisabledColor
+    cDefaultColors : array [TVTColorEnum] of TColor = (
+	  clBtnShadow,            //DisabledColor
       clHighlight,            //DropMarkColor
       clHighlight,            //DropTargetColor
       clHighlight,            //FocusedSelectionColor
@@ -35,8 +52,8 @@ type
       clHighlight,            //SelectionRectangleBorderColor
       clBtnShadow,            //HeaderHotColor
       clHighlightText,        //SelectionTextColor
-      clInactiveCaptionText); //UnfocusedColor  [IPK]
-
+      clInactiveCaptionText //UnfocusedColor  [IPK]
+    );
   private
     FOwner  : TCustomControl;
     FColors : array [TVTColorEnum] of TColor; //[IPK] 15 -> 16
@@ -84,9 +101,10 @@ implementation
 
 uses
   WinApi.Windows,
-  VirtualTrees,
+  VirtualTrees.Types,
   VirtualTrees.Utils,
-  VirtualTrees.StyleHooks;
+  VirtualTrees.StyleHooks,
+  VirtualTrees.BaseTree;
 
 type
   TBaseVirtualTreeCracker = class(TBaseVirtualTree);
@@ -123,7 +141,7 @@ function TVTColors.GetColor(const Index : TVTColorEnum) : TColor;
 begin
   //Only try to fetch the color via StyleServices if theses are enabled
   //Return default/user defined color otherwise
-  if TreeView.VclStyleEnabled then
+  if not (csDesigning in TreeView.ComponentState) { see issue #1185 } and TreeView.VclStyleEnabled then
   begin
     //If the ElementDetails are not defined, fall back to the SystemColor
     case Index of
@@ -215,11 +233,14 @@ begin
         cBorderColor :
           RedrawWindow(FOwner.Handle, nil, 0, RDW_FRAME or RDW_INVALIDATE or RDW_NOERASE or RDW_NOCHILDREN)
       else
-        FOwner.Invalidate;
-      end;
-    end;
+        if not (tsPainting in TreeView.TreeStates) then // See issue #1186
+          FOwner.Invalidate;
+      end;//case
+    end;// if
   end;
 end;
+
+//----------------------------------------------------------------------------------------------------------------------
 
 function TVTColors.StyleServices(AControl : TControl) : TCustomStyleServices;
 begin
